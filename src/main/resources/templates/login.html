@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="_csrf" content="${_csrf.token}"/>
+  <meta name="_csrf_header" content="${_csrf.headerName}"/>
+  <title>Login Form</title>
 </head>
 <body>
-<form method="POST" action="/login">
-    <label for="username">Login</label><br>
+
+<div class="login-container">
+  <h2>Login</h2>
+  <form name="f" th:action="@{/login}" method="post">
+  <label for="username">Login</label><br>
     <input type="text" id="username" name="username" ><br>
     <label for="password">Password</label><br>
     <input type="password" id="password" name="password" ><br>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     <input type="submit" value="Submit">
-</form>
-<div th:if="${error}" style="color: red;">
-    <p th:text="${error}"></p>
+  </form>
 </div>
+
 </body>
 </html>

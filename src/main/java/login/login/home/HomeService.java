@@ -1,25 +1,24 @@
 package login.login.home;
 
-import login.login.ForbiddenException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.List;
+
 @Service
 public class HomeService {
     public String checkUserType(Authentication authentication, Model model) {
-        if (authentication == null) {
-            throw new ForbiddenException("Forbidden");
-        }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String authorities = userDetails.getAuthorities().toString();
-
-        if (authorities.toString().contains("ROLE_ADMIN")) {
-
-            return "admin";
-        }
-        model.addAttribute("message", authorities);
-        return "home";
+        List<Strategy> strategies = List.of(new AdminLoginStrategy(authentication, model));
+        return strategies.stream().filter(strategy -> strategy.isApplicable(authorities)).findFirst().orElse(new UserLoginStrategy(authentication, model)).doStrategy();
+//        for (Strategy strategy : strategies) {
+//            if (strategy.isApplicable(authorities)) {
+//                return strategy.doStrategy();
+//            }
+//        }
+//        return new UserLoginStrategy(authentication, model).doStrategy();
     }
 }

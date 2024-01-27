@@ -28,35 +28,25 @@ class HomeControllerTest {
     @Test
     @WithMockUser(username = "user1", password = "password1", roles = "USER")
     public void testHomeWithAuthenticatedUser() throws Exception {
-
-
-
         mockMvc.perform(get("/home"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("home"))
-                .andExpect(model().attributeExists("message"))
-                .andExpect(model().attribute("message", "[ROLE_USER]"));
+                .andExpect(model().attributeExists("username"))
+                .andExpect(model().attribute("username", "[ROLE_USER]"));
 
     }
     @Test
     @WithMockUser(username = "admin", password = "adminPass", roles = "ADMIN")
     public void testHomeWithAuthenticatedAdmin() throws Exception {
-
-
-
         mockMvc.perform(get("/home"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin"))
                 .andExpect(content().string(containsString("Admin Web Page")));
-
-
-
     }
     @Test
     public void testHomeWithNonAuthenticatedUser() throws Exception {
         mockMvc.perform(get("/home"))
-                .andExpect(status().isForbidden());
-
-
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/forbidden"));
     }
 }
